@@ -1,0 +1,72 @@
+<include file="header" />
+<style>
+    span {
+        color: darkgrey ;
+    }
+</style>
+
+<script type="text/javascript">
+
+</script>
+<!-- Begin page content -->
+    <div class="row">
+        <h1></h1>
+    </div>
+    <div class="row">
+        <h1></h1>
+    </div>
+    <div class="row">
+        <h1></h1>
+    </div>
+    <hr>
+
+    <p class="lead">编辑 珠宝品牌</p>
+
+<!--bootstrap input -->
+        <form action="__URL__/addCategory" method="POST" class="form-horizontal" enctype="multipart/form-data">
+            <div class="form-group">
+                <label  class="col-sm-2 control-label">珠宝品牌</label>
+                <div class="col-sm-2">
+                    <select class="form-control" name="type">
+                        <if condition="$category_brand.brand_id neq null">
+                            <option value="{$category_brand.brand_id}" selected="selected">{$brand_array.$category_brand[brand_id]}</option>
+                        </if>
+                        <option value="-1">未选择</option>
+                        <volist name="brand" id="b">
+                            <if condition="$b.brand_id neq $category_brand.brand_id">
+                                <option value="{$b.brand_id}">{$b.brand_name}</option>
+                            </if>
+                        </volist>
+                    </select>
+                </div>
+                <label  class="col-sm-2 control-label"></label>
+            </div>
+
+            <div class="form-group">
+                <label  class="col-sm-2 control-label">珠宝种类</label>
+                <div class="col-sm-2">
+                    <input type="text" name="category_name" value="{$category.category_name}" class="form-control" placeholder="">
+                </div>
+                <div class="col-sm-2">
+                    <td><input type="hidden" name="category_id" value="{$category.category_id}"></td>
+                </div>
+            </div>
+
+
+
+            <div class="form-group">
+                <div class="col-sm-2"></div>
+                <div class="col-sm-4">
+                    <button type="submit" class="btn btn-info">Submit</button>
+                </div>
+                <div class="col-sm-4">
+                </div>
+            </div>
+        </form>
+    <hr>
+
+<include file="footer" />
+
+
+
+

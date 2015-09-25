@@ -1,0 +1,229 @@
+<include file="header" />
+<style>
+    span {
+        color: darkgrey ;
+    }
+</style>
+
+
+<!-- Begin page content -->
+    <div class="row">
+        <h1></h1>
+    </div>
+    <div class="row">
+        <h1></h1>
+    </div>
+    <div class="row">
+        <h1></h1>
+    </div>
+    <hr>
+
+    <p class="lead">编辑 珠宝产品</p>
+
+<!--bootstrap input -->
+        <form action="__URL__/addProduct" method="POST" class="form-horizontal" enctype="multipart/form-data">
+            <div class="form-group">
+                <label  class="col-sm-2 control-label">珠宝品牌</label>
+                <div class="col-sm-2">
+                    <select onchange="getCategory(this.value)" class="form-control" name="b_id">
+                        <if condition="$product.brand_id neq null">
+                            <option value="{$product.b_id}" selected="selected">
+                                {$product.brand_name}
+                            </option>
+                        </if>
+                        <option value="-1">未选择</option>
+                        <volist name="brand" id="b" key="k">
+                            <!--<if condition="$b.brand_id neq $category_brand.brand_id">-->
+                                <option value="{$k}">{$b}</option>
+                            <!--</if>-->
+                        </volist>
+                    </select>
+                </div>
+                <label  class="col-sm-2 control-label"></label>
+            </div>
+
+            <div class="form-group">
+                <label  class="col-sm-2 control-label">珠宝分类</label>
+                <div class="col-sm-2">
+                    <select id="category_results" class="form-control" name="c_id">
+                         <if condition="$product.product_id neq null">
+                            <option value="{$product.c_id}" selected="selected">
+                                {$category.$product[c_id]}
+                            </option>
+                        </if>
+                    </select>
+                </div>
+                <label  class="col-sm-2 control-label"></label>
+            </div>
+
+            <div class="form-group">
+                <label  class="col-sm-2 control-label">商品名</label>
+                <div class="col-sm-2">
+                    <input type="text" name="product_name" value="{$product.product_name}" class="form-control" placeholder="">
+                </div>
+                <div class="col-sm-2">
+                    <td><input type="hidden" name="product_id" value="{$product.product_id}"></td>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label  class="col-sm-2 control-label">款号</label>
+                <div class="col-sm-2">
+                    <input type="text" name="style" value="{$product.style}" class="form-control" placeholder="">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label  class="col-sm-2 control-label">价格</label>
+                <div class="col-sm-2">
+                    <input type="text" name="price" value="{$product.price}" class="form-control" placeholder="">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label  class="col-sm-2 control-label">材质</label>
+                <div class="col-sm-2">
+                    <input type="text" name="material" value="{$product.material}" class="form-control" placeholder="">
+                </div>
+            </div>
+
+
+            <div class="form-group">
+                <label  class="col-sm-2 control-label">重量</label>
+                <div class="col-sm-2">
+                    <input type="text" name="weight" value="{$product.weight}" class="form-control" placeholder="">
+                </div>
+            </div>
+
+
+            <div class="form-group">
+                <label  class="col-sm-2 control-label">尺寸</label>
+                <div class="col-sm-2">
+                    <input type="text" name="size" value="{$product.size}" class="form-control" placeholder="">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label  class="col-sm-2 control-label">戒面宽度</label>
+                <div class="col-sm-2">
+                    <input type="text" name="width" value="{$product.width}" class="form-control" placeholder="">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label  class="col-sm-2 control-label">备注</label>
+                <div class="col-sm-4">
+                    <!--<input type="text" name="remark" value="{$product.remark}" class="form-control" placeholder="">-->
+                    <textarea name="remark">{$product.remark}</textarea>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label  class="col-sm-2 control-label">在线链接</label>
+                <div class="col-sm-4">
+                    <!--<input type="text" name="remark" value="{$product.remark}" class="form-control" placeholder="">-->
+                    <textarea name="shop_url">{$product.shop_url}</textarea>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label  class="col-sm-2 control-label">产品小图</label>
+                <div class="col-sm-2">
+                    <input type="file" name="product_logo_img" class="form-control" placeholder="">
+                </div>
+                <label  class="col-sm-2 control-label">{$product.product_logo_img}</label>
+            </div>
+
+            <div class="form-group">
+                <label  class="col-sm-2 control-label">轮播图</label>
+                <div class="col-sm-2">
+                    <input class="form-control" type="file" id="file1" name="file" />
+                </div>
+                <div class="col-sm-2">
+                    <button id="uploadImg" type="button" class="btn btn-info">上传</button>
+                </div>
+            </div>
+
+            <div id="addImg" class="form-group">
+                <volist name="imageArr" id="image" key="k">
+                    <div class="col-sm-6">
+                        <img src="__ROOT__/{$image}"><br/>
+                        <a href="javascript:;" onclick="removeDiv(this)" id="p_{$k}">删除</a>
+                    </div>
+                    <div class="col-sm-2">
+                        <input type="hidden" name="imageUrl[]" id="p_{$k}" value="{$image}" />
+                    </div>
+                </volist>
+            </div>
+
+            <div class="form-group">
+                <div class="col-sm-2"></div>
+                <div class="col-sm-4">
+                    <button type="submit" class="btn btn-info">Submit</button>
+                </div>
+                <div class="col-sm-4">
+                </div>
+            </div>
+        </form>
+    <hr>
+
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        $("#uploadImg").click(function () {
+            ajaxFileUpload();
+        });
+    });
+
+    function removeDiv(obj){
+        var id = $(obj).attr('id');
+        $(obj).parent().remove();
+        $('#'+id).remove();
+    }
+
+    function getCategory(b_id) {
+        $.get("__URL__/getCategory", {id:b_id}, function (data, textStatus) {
+            console.log(data);
+            $('#category_results').html(data);
+        });
+    }
+
+
+        function ajaxFileUpload() {
+        $.ajaxFileUpload
+        (
+                {
+                    url: '__URL__/ajaxUploads', //用于文件上传的服务器端请求地址
+                    secureuri: false, //是否需要安全协议，一般设置为false
+                    fileElementId: 'file1', //文件上传域的ID
+                    dataType: 'json', //返回值类型 一般设置为json
+                    success: function (data, status)  //服务器成功响应处理函数
+                    {
+                        $('#addImg').append('<div class="col-sm-6"><img src="__ROOT__'+data.pic+'"><br/><a href="javascript:;" onclick="removeDiv(this)" id="'+data.id+'">删除</a></div>');
+                        $('#addImg').append('<input type="hidden" name="imageUrl[]" id="'+data.id+'" value="'+data.pic+'" />');
+                        if (typeof (data.error) != 'undefined') {
+                            if (data.error != '') {
+                                alert(data.error);
+                            } else {
+                                alert(data.msg);
+                            }
+                        }
+                    },
+                    error: function (data, status, e)//服务器响应失败处理函数
+                    {
+                        alert(e);
+                    }
+                }
+        )
+        return false;
+    }
+</script>
+
+
+
+
+<include file="footer" />
+
+
+
+

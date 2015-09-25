@@ -1,0 +1,83 @@
+<include file="header" />
+
+<!-- Begin page content -->
+    <div class="row">
+        <h1></h1>
+    </div>
+    <div class="row">
+        <h1></h1>
+    </div>
+    <div class="row">
+        <h1></h1>
+    </div>
+<!-- Single button -->
+    <!--<div class="btn-group">-->
+        <!--<a href="__URL__/checkComment" >-->
+            <!--<button type="button" class="btn btn-primary">-->
+               <!--新增地标-->
+            <!--</button>-->
+        <!--</a>-->
+    <!--</div>-->
+
+    <!--<div class="row">-->
+        <!--<form action="__URL__/searchLandMark" method="POST" class="navbar-form navbar-left" role="search">-->
+            <!--<div class="form-group">-->
+                <!--&lt;!&ndash;<label>input:</label>&ndash;&gt;-->
+                <!--<input type="text" name="search" class="form-control" placeholder="Search">-->
+            <!--</div>-->
+            <!--<button type="submit" class="btn btn-default">Submit</button>-->
+        <!--</form>-->
+
+    <!--</div>-->
+
+    <div class="panel panel-default">
+        <!-- Default panel contents -->
+        <div class="panel-heading">评论列表</div>
+        <!--<div class="panel-body">-->
+            <!--&lt;!&ndash;<p>...</p>&ndash;&gt;-->
+        <!--</div>-->
+
+        <!-- Table -->
+        <table class="table">
+            <tr>
+                <th>id</th>
+                <th>用户</th>
+                <th>地标</th>
+                <th>评论内容</th>
+                <th>评论时间</th>
+                <th>操作</th>
+                <!--<th>标签</th>-->
+                <!--<th>更新地标数据</th>-->
+                <!--<th>删除地标(一点就删,切记切记)</th>-->
+                <!--<th>id</th>-->
+            </tr>
+
+                <volist name="comment" id="c">
+                    <tr>
+                        <td>{$c.comment_id}</td>
+                        <td>{$c.name}</td>
+                        <td>{$c.title}</td>
+                        <td>{$c.content}</td>
+                        <td>{$c.create_time}</td>
+                        <!--<td>{$lm.tagName}</td>-->
+                        <if condition="($c.status eq 0)">
+                            <td><a href="__URL__/checkComment/id/{$c.comment_id}">通过</a></td>
+                        <else />
+                            <td>已通过</td>
+                        </if>
+                        <td><a href="__URL__/deleteComment/id/{$c.comment_id}">删除</a></td>
+                    </tr>
+                </volist>
+
+        </table>
+    </div>
+
+    <div class="pagination"><ul>{$page}</ul></div>
+
+    <hr>
+
+<include file="footer" />
+
+
+
+

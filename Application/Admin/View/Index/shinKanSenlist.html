@@ -1,0 +1,83 @@
+<include file="header" />
+
+<!-- Begin page content -->
+    <div class="row">
+        <h1></h1>
+    </div>
+    <div class="row">
+        <h1></h1>
+    </div>
+    <div class="row">
+        <h1></h1>
+    </div>
+
+<!-- Single button -->
+    <div class="btn-group">
+        <a href="__URL__/editSKS" >
+            <button type="button" class="btn btn-primary">
+               新增标新干线
+            </button>
+        </a>
+    </div>
+
+    <div class="row">
+        &nbsp;
+    </div>
+
+    <div class="panel panel-default">
+        <!-- Default panel contents -->
+        <div class="panel-heading">新干线 列表 倒序排列</div>
+        <!--<div class="panel-body">-->
+            <!--&lt;!&ndash;<p>...</p>&ndash;&gt;-->
+        <!--</div>-->
+
+        <!-- Table -->
+        <table class="table">
+            <tr>
+                <th>id</th>
+                <th>标题</th>
+                <th>创建时间</th>
+                <th>排序</th>
+                <th>更新地标数据</th>
+                <th>删除地标(一点就删,切记切记)</th>
+            </tr>
+
+                <volist name="sks" id="s">
+                    <tr>
+                        <td>{$s.shinkansen_id}</td>
+                        <td>{$s.title}</td>
+                        <td>{$s.create_time}</td>
+                        <td>{$s.sort}</td>
+                        <td><a href="__URL__/editSKS/id/{$s.shinkansen_id}"> 编辑 </a></td>
+                        <td><a href="__URL__/deleteSKS/id/{$s.shinkansen_id}"> 删除 </a> </td>
+                    </tr>
+                </volist>
+        </table>
+    </div>
+
+
+    <!--<table>-->
+        <!--<tr>-->
+            <!--<th>id</th>-->
+            <!--<th>标题</th>-->
+            <!--<th>地址</th>-->
+            <!--<th>座机</th>-->
+            <!--<th>类型</th>-->
+            <!--<th>地区</th>-->
+            <!--&lt;!&ndash;<th>横图</th>&ndash;&gt;-->
+            <!--&lt;!&ndash;<th>小图</th>&ndash;&gt;-->
+            <!--&lt;!&ndash;<th>id</th>&ndash;&gt;-->
+        <!--</tr>-->
+
+
+    <!--</table>-->
+
+
+
+    <hr>
+
+<include file="footer" />
+
+
+
+

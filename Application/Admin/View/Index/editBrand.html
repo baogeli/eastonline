@@ -1,0 +1,112 @@
+<include file="header" />
+<style>
+    span {
+        color: darkgrey ;
+    }
+</style>
+
+<!-- Begin page content -->
+    <div class="row">
+        <h1></h1>
+    </div>
+    <div class="row">
+        <h1></h1>
+    </div>
+    <div class="row">
+        <h1></h1>
+    </div>
+    <hr>
+
+    <p class="lead">编辑 珠宝品牌</p>
+
+
+<!--bootstrap input -->
+        <form action="__URL__/addBrand" method="POST" class="form-horizontal" enctype="multipart/form-data">
+            <div class="form-group">
+                <label  class="col-sm-2 control-label">品牌</label>
+                <div class="col-sm-4">
+                    <input type="text" name="brand_name" value="{$b.brand_name}" class="form-control" placeholder="">
+                </div>
+                <div class="col-sm-2">
+                    <td><input type="hidden" name="id" value="{$b.brand_id}"></td>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label  class="col-sm-2 control-label">购买链接</label>
+                <div class="col-sm-4">
+                    <input type="text" name="brand_shop_url" value="{$b.brand_shop_url}" class="form-control" placeholder="">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label  class="col-sm-2 control-label">LOGO</label>
+                <div class="col-sm-4">
+                    <input type="file" name="logo_img" class="form-control" placeholder="">
+                </div>
+                <label  class="col-sm-2 control-label">{$b.logo_img}</label>
+            </div>
+
+            <div class="form-group">
+                <div class="col-sm-2"></div>
+                <div class="col-sm-4">
+                    <button type="submit" class="btn btn-info">Submit</button>
+                </div>
+                <div class="col-sm-4">
+                </div>
+            </div>
+        </form>
+    <hr>
+
+<script type="text/javascript">
+//    $(function () {
+    $(document).ready(function(){
+        $("#uploadImg").click(function () {
+            ajaxFileUpload();
+        });
+    });
+
+    function removeDiv(obj){
+        var id = $(obj).attr('id');
+        $(obj).parent().remove();
+        $('#'+id).remove();
+    }
+
+
+        function ajaxFileUpload() {
+        $.ajaxFileUpload
+        (
+                {
+                    url: '__URL__/ajaxUploads', //用于文件上传的服务器端请求地址
+                    secureuri: false, //是否需要安全协议，一般设置为false
+                    fileElementId: 'file1', //文件上传域的ID
+                    dataType: 'json', //返回值类型 一般设置为json
+                    success: function (data, status)  //服务器成功响应处理函数
+                    {
+                        $('#addImg').append('<div class="col-sm-6"><img src="/palace'+data.pic+'"><br/><a href="javascript:;" onclick="removeDiv(this)" id="'+data.id+'">删除</a></div>');
+                        $('#addImg').append('<input type="hidden" name="imageUrl[]" id="'+data.id+'" value="/palace'+data.pic+'" />');
+                        if (typeof (data.error) != 'undefined') {
+                            if (data.error != '') {
+                                alert(data.error);
+                            } else {
+                                alert(data.msg);
+                            }
+                        }
+                    },
+                    error: function (data, status, e)//服务器响应失败处理函数
+                    {
+                        alert(e);
+                    }
+                }
+        )
+        return false;
+    }
+</script>
+
+
+
+<include file="footer" />
+
+
+
+

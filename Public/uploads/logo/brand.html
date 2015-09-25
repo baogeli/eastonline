@@ -1,0 +1,97 @@
+<include file="./Public/header.html"/>
+<script type="text/javascript">
+    $(function () {
+        $('.category > ul > li').each(function () {
+            $(this).on('click', function () {
+                $('.active').removeClass('active');
+                $(this).toggleClass('active');
+                var c_id = $(this).attr('data-id');
+                getProductList(c_id);
+            });
+        });
+    });
+
+    function getProductList(c_id){
+        $.get("__URL__/getProductList", {id:c_id}, function (data, textStatus) {
+            $('#p_results').html(data);
+        });
+    }
+</script>
+<div class="clear"></div>
+<div class="dc1 brand"><img src="/palace{$logo_img}"><span>在线购买</span></div>
+<!--<div class="dc1 brand"><img src="__PUBLIC__/images/logo-zss.gif"><span>在线购买</span></div>-->
+<!--<div class="dc1 brand"><img src="{$logo_img}"><span>在线购买</span></div>-->
+<div class="dc1 category">
+    <ul>
+        <volist name="category" id="c">
+            <li
+            <if condition="$i eq 1">class="active"</if>
+            data-id="{$c.category_id}">{$c.category_name}</li>
+        </volist>
+    </ul>
+</div>
+<div id="p_results" class="dc1 plist">
+
+    <volist name="product" id="p">
+        <a href="__URL__/productDetail/p_id/{$p.product_id}">
+            <div class="p" <if condition="$i % 2 eq 0">right</if>>
+                <div>
+                        <img src="/palace{$p.imageurl}">
+                </div>
+                <p>{$p.product_name}</p>
+                <p>{$price}</p>
+            </div>
+        </a>
+    </volist>
+    <!--<div class="p">-->
+        <!--<div><img src="__PUBLIC__/images/p1.gif"></div>-->
+        <!--<p>PerfectLove</p>-->
+
+        <!--<p>$2760</p>-->
+    <!--</div>-->
+    <!--<div class="p right">-->
+        <!--<div><img src="__PUBLIC__/images/p1.gif"></div>-->
+        <!--<p>PerfectLove</p>-->
+
+        <!--<p>$1</p>-->
+    <!--</div>-->
+    <!--<div class="p">-->
+        <!--<div><img src="__PUBLIC__/images/p1.gif"></div>-->
+        <!--<p>PerfectLove</p>-->
+
+        <!--<p>$2760</p>-->
+    <!--</div>-->
+    <!--<div class="p right">-->
+        <!--<div><img src="__PUBLIC__/images/p1.gif"></div>-->
+        <!--<p>PerfectLove</p>-->
+
+        <!--<p>$2</p>-->
+    <!--</div>-->
+    <!--<div class="p">-->
+        <!--<div><img src="__PUBLIC__/images/p1.gif"></div>-->
+        <!--<p>PerfectLove</p>-->
+
+        <!--<p>$2760</p>-->
+    <!--</div>-->
+    <!--<div class="p right">-->
+        <!--<div><img src="__PUBLIC__/images/p1.gif"></div>-->
+        <!--<p>PerfectLove</p>-->
+
+        <!--<p>$3</p>-->
+    <!--</div>-->
+    <!--<div class="p">-->
+        <!--<div><img src="__PUBLIC__/images/p1.gif"></div>-->
+        <!--<p>PerfectLove</p>-->
+
+        <!--<p>$2760</p>-->
+    <!--</div>-->
+    <!--<div class="p right">-->
+        <!--<div><img src="__PUBLIC__/images/p1.gif"></div>-->
+        <!--<p>PerfectLove</p>-->
+
+        <!--<p>$4</p>-->
+    <!--</div>-->
+</div>
+<div class="clear h20"></div>
+</body>
+</html>

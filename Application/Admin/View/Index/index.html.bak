@@ -1,0 +1,31 @@
+<include file="header" />
+
+<!-- Begin page content -->
+    <div class="row">
+        <h1></h1>
+    </div>
+    <div class="row">
+        <h1></h1>
+    </div>
+    <div class="row">
+        <h1></h1>
+    </div>
+    <hr>
+    <p class="lead">添加top100</p>
+    <form action="__URL__/" method="post">
+        <table>
+            <tr>
+                <td>标题: </td>
+                <td></td>
+                <td><input type="text" name="title"></td>
+            </tr>
+
+        </table>
+    </form>
+    <hr>
+
+<include file="footer" />
+
+
+
+

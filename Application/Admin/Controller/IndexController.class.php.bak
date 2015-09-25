@@ -1,0 +1,490 @@
+<?php
+namespace Admin\Controller;
+use Think\Controller;
+class IndexController extends Controller
+{
+//    public function login()
+//    {
+//        $this->display('index/login');
+//    }
+
+    //  登入界面
+
+    public function _before_index(){
+        //$this->display('index/login');
+    }
+
+    public function index()
+    {
+        $this->display('index/login');
+    }
+
+    //  登入操作 跳转到地标列表
+    public function checkLogin()
+    {
+        $username = I('username');
+        $password = MD5(I('password'));
+
+        $admin = M('user');
+        $admin = $admin->where("name = '{$username}' and pwd = '{$password}'")->find();
+        if (!empty($admin)) {
+            session('user',$admin['user_id']);
+            $this->success('登入成功，跳转中','landmarklist',1);
+        } else {
+            $this->error('登入失败','',2);
+        }
+
+//        if ($username == 'admin' && $password == 'admin') {
+//            $this->success('登入成功','landMarkList',1);
+//        }
+    }
+
+    //  编辑Top100详情
+    public function editTop()
+    {
+        $landmark_id = I('id');
+        if ($landmark_id) {
+            $landmark = M('landmark');
+            $landmark = $landmark->where('landmark_id ='.$landmark_id)->find();
+            $typeName = $this->_typeArray();
+            $areaName = $this->_areaArray();
+            $tagName  = $this->_tagArray();
+            $this->assign('lm',$landmark);
+            $this->assign('tn',$typeName);
+            $this->assign('an',$areaName);
+            $this->assign('gn',$tagName);
+        }
+        $this->display('index/editTop');
+    }
+
+    //  Top100 列表
+    public function landMarkList()
+    {
+        if (!session('?user')) {
+            $this->error('请先登入','index',2);
+        }
+        $landmark = M('landmark');
+        //  分页开始
+        //  1 计算数据总条数
+        $count = $landmark->count();
+        //  2 实例化分页类
+        $page = new \Think\Page($count,20);
+        //$page->setConfig('theme',"<li><a>%totalRow% %header% %nowPage%/%totalPage% 页</a></li><li>%upPage%</li><li>%downPage%</li><li>%first%</li><li>%prePage%</li><li>%linkPage%</li><li>%nextPage%</li><li>%end%</li>");
+        $page->setConfig('first','首页');
+
+//        $page->setConfig('header','共有 <b>%TOTAL_ROW%</b> 条记录');
+//        $page->setConfig('prev','上一页');
+//        $page->setConfig('next','下一页');
+//        $page->setConfig('last','末页');
+//        $page->setConfig('first','首页');
+//        $page->setConfig('theme','%FIRST% %UP_PAGE% %LINK_PAGE% %DOWN_PAGE% %END% %HEADER%');
+        $page->setConfig('theme','%FIRST% %UP_PAGE% %LINK_PAGE% %DOWN_PAGE% %END% %HEADER%');
+
+        //  3 分页输出
+        $show = $page->show();
+
+        $landmark  = $landmark->order('score desc')->limit($page->firstRow . ',' . $page->listRows)->select();
+        $typeArray = $this->_typeArray();
+        $areaArray = $this->_areaArray();
+        $tagArray  = $this->_tagArray();
+        foreach ($landmark as &$lm) {
+            $lm['typeName'] = $typeArray[$lm['type']];
+            $lm['areaName'] = $areaArray[$lm['area']];
+            $lm['tagName']  = $tagArray[$lm['tag']];
+        }
+//        dump($landmark);exit;
+        $this->assign('landmark',$landmark);
+        $this->assign('page',$show);
+        $this->display('index/landmarklist');
+    }
+
+
+    //  新增及更新Top100
+    public function addLandMark()
+    {
+        $id = I('id');
+        $title = I('title');
+        $address = I('address');
+        $gps_address = I('gps_address');
+        $telphone = I('telphone');
+        $content = I('content');
+        $type = I('type');
+        $area = I('area');
+        $tag  = I('tag');
+        $e = I('e');  //东经
+        $n = I('n');  //北纬
+        $score = I('score'); // 排序
+        $is_top= I('is_top'); // 是否top100
+//        dump(I());exit;
+        //  更新
+        if ($id) {
+            $check = $this->_checkInput($title, $address, $telphone, $content, $e, $n, true);
+            if (is_string($check)) {
+                $this->error($check);
+            }
+            $landmark = M('landmark');
+            $image0 = $_FILES['image0']['error'];
+            $image1 = $_FILES['image1']['error'];
+            $image2 = $_FILES['image2']['error'];
+            $image3 = $_FILES['image3']['error'];
+            $image4 = $_FILES['image4']['error'];
+            //  更新上传的图片
+            if ($image0 == 0 || $image1 == 0 || $image2 == 0 || $image3 == 0 || $image4 == 0) {
+                $upload = new \Think\Upload();// 实例化上传类
+                $upload->maxSize = 3145728;// 设置附件上传大小
+                $upload->exts = array('jpg', 'gif', 'png', 'jpeg');// 设置附件上传类型
+                $upload->rootPath = './Public'; // 设置附件上传根目录
+                $upload->savePath = '/uploads/Landmark/'; // 设置附件上传（子）目录
+                $upload->autoSub = false;
+                // 上传文件
+                $info = $upload->upload();
+                if (!$info) {// 上传错误提示错误信息
+                    $this->error($upload->getError());
+                } else {
+                    foreach ($info as $img_name => $file) {
+                        $landmark->$img_name = '/Public' . $file['savepath'] . $file['savename'];
+                    }
+                }
+            }
+            //  更新内容
+            $landmark->title = $title;
+            $landmark->address = $address;
+            $landmark->gps_address = $gps_address;
+            $landmark->telphone = $telphone;
+            $landmark->content = $content;
+            $landmark->type = $type;
+            $landmark->area = $area;
+            $landmark->tag  = $tag;
+            $landmark->e = $e;
+            $landmark->n = $n;
+            $landmark->score = $score;
+            $landmark->is_top = $is_top;
+            if ($landmark->where('landmark_id ='.$id)->save() !== false) {
+                $this->success('编辑成功','landMarkList',1);
+            }
+        } else {
+            $check = $this->_checkInput($title, $address, $telphone, $content, $e, $n, false);
+            if (is_string($check)) {
+                $this->error($check);
+            }
+            $upload = new \Think\Upload();// 实例化上传类
+            $upload->maxSize = 3145728;// 设置附件上传大小
+            $upload->exts = array('jpg', 'gif', 'png', 'jpeg');// 设置附件上传类型
+            $upload->rootPath = './Public'; // 设置附件上传根目录
+            $upload->savePath = '/uploads/Landmark/'; // 设置附件上传（子）目录
+            $upload->autoSub = false;
+            // 上传文件
+            $info = $upload->upload();
+            if (!$info) {// 上传错误提示错误信息
+                $this->error($upload->getError());
+            } else {// 上传成功 获取上传文件信息
+                $landmark = M('landmark');
+                foreach ($info as $img_name => $file) {
+                    $landmark->$img_name = '/Public' . $file['savepath'] . $file['savename'];
+                }
+                $landmark->title = $title;
+                $landmark->address = $address;
+                $landmark->telphone = $telphone;
+                $landmark->content = $content;
+                $landmark->type = $type;
+                $landmark->area = $area;
+                $landmark->tag  = $tag;
+                $landmark->e = $e;
+                $landmark->n = $n;
+                $landmark->score = $score;
+                $landmark->is_top = $is_top;
+                if ($landmark->add()) {
+                    $this->success('添加成功', 'landMarkList', 2);
+                }
+            }
+        }
+    }
+
+
+    //  新干线列表
+    public function shinKanSenList() {
+        if (!session('?user')) {
+            $this->error('请先登入','index',2);
+        }
+        $shinkansen = M('shinkansen');
+        $shinkansen = $shinkansen->order('shinkansen_id desc')->select();
+        $this->assign('sks',$shinkansen);
+        $this->display('shinKanSenList');
+    }
+
+    //  编辑新干线
+    public function editSKS() {
+        $id = I('id');
+        if ($id) {
+            $shinkansen = M('shinkansen');
+            $shinkansen = $shinkansen->where('shinkansen_id ='.$id)->find();
+            $this->assign('s',$shinkansen);
+        }
+        $this->display('editSKS');
+    }
+
+    //  新增更新新干线
+    public function addSKS() {
+        $id = I('id');
+        $title = I('title');
+        $sort = I('sort');
+        //  不转义html标签
+        $content = htmlspecialchars_decode(I('content'));
+//        dump(htmlspecialchars_decode($content));exit;
+        //  校验数据
+        $check = $this->_checkSKS($title,$content);
+        if (is_string($check)) {
+            $this->error($check);
+        }
+        $shinkansen = M('shinkansen');
+        if ($id) {
+            if ($_FILES['image']['error'] == 0) {
+                //  封面图片上传
+                $upload = new \Think\Upload();// 实例化上传类
+                $upload->maxSize = 3145728;// 设置附件上传大小
+                $upload->exts = array('jpg', 'gif', 'png', 'jpeg');// 设置附件上传类型
+                $upload->rootPath = './Public'; // 设置附件上传根目录
+                $upload->savePath = '/uploads/ShinKanSen/'; // 设置附件上传（子）目录
+                $upload->autoSub = false;
+                // 上传文件
+                $info = $upload->upload();
+                if (!$info) {// 上传错误提示错误信息
+                    $this->error($upload->getError());
+                } else {
+                    foreach ($info as $img_name => $file) {
+                        $shinkansen->$img_name = '/Public' . $file['savepath'] . $file['savename'];
+                    }
+                }
+            }
+            $shinkansen->title = $title;
+            $shinkansen->content = $content;
+            $shinkansen->sort = $sort;
+            if ($shinkansen->where('shinkansen_id ='.$id)->save() !== false) {
+                $this->success('编辑成功','shinKanSenList',1);
+            }
+        } else {
+            //  封面图片上传
+            $upload = new \Think\Upload();// 实例化上传类
+            $upload->maxSize = 3145728;// 设置附件上传大小
+            $upload->exts = array('jpg', 'gif', 'png', 'jpeg');// 设置附件上传类型
+            $upload->rootPath = './Public'; // 设置附件上传根目录
+            $upload->savePath = '/uploads/ShinKanSen/'; // 设置附件上传（子）目录
+            $upload->autoSub = false;
+            // 上传文件
+            $info = $upload->upload();
+            if (!$info) {// 上传错误提示错误信息
+                $this->error($upload->getError());
+            } else {
+                foreach ($info as $img_name => $file) {
+                    $shinkansen->$img_name = '/Public' . $file['savepath'] . $file['savename'];
+                }
+            }
+            $shinkansen->title = $title;
+            $shinkansen->content = $content;
+            $shinkansen->sort = $sort;
+            $shinkansen->create_time = date('Y-m-d H:i:s');
+            if ($shinkansen->add()) {
+                $this->success('编辑成功','shinKanSenList',1);
+            }
+        }
+    }
+
+    //  审核评论列表
+    public function commentList() {
+        if (!session('?user')) {
+            $this->error('请先登入','index',2);
+        }
+        $comment = M('comment');
+        //  分页开始
+        //  1 计算数据总条数
+        //$count = $comment->where("status = 0")->count();
+        $count = $comment->count();
+        //  2 实例化分页类
+        $page = new \Think\Page($count,20);
+        $page->setConfig('first','首页');
+        $page->setConfig('theme','%FIRST% %UP_PAGE% %LINK_PAGE% %DOWN_PAGE% %END% %HEADER%');
+        //  3 分页输出
+        $show = $page->show();
+        $comment = $comment
+            ->join('map_user on map_user.user_id = map_comment.user_id')
+            ->join('map_landmark on map_landmark.landmark_id = map_comment.landmark_id')
+            ->field('map_comment.status,map_comment.comment_id,map_user.name,map_landmark.title,map_comment.content,map_comment.create_time')
+//            ->where('map_comment.status = 0')
+            ->limit($page->firstRow . ',' . $page->listRows)
+            ->select();
+
+        $this->assign('comment',$comment);
+        $this->assign('page',$show);
+        $this->display('index/commentList');
+    }
+
+    //  checkComment
+    public function checkComment() {
+        $id = I('id');
+        $comment = M('comment');
+        $data['status'] = 1;
+        $condition['comment_id'] = $id;
+        if ($comment->where($condition)->save($data)) {
+            $this->success('已通过');
+        }
+    }
+
+    //  ckEdit
+    public function ckUpload() {
+        $upload_dir = $_SERVER['DOCUMENT_ROOT'].'/Public/uploads/ckimg/';
+        //$upload_dir = '/Public/uploads/ckimg/';
+        $upload_file = rand().$_FILES['upload']['name'];
+        $callback = $_REQUEST['CKEditorFuncNum'];
+        if (is_uploaded_file($_FILES['upload']['tmp_name'])) {
+            move_uploaded_file($_FILES['upload']['tmp_name'],$upload_dir.$upload_file);
+        }
+        echo '请复制： /Public/uploads/ckimg/'.$upload_file;
+        exit;
+    }
+
+    //  top100 搜索
+    public function searchLandMark() {
+        $search = I('search');
+        $landmark = M('landmark');
+        $landmark = $landmark->where("title like '%{$search}%'")->select();
+        //dump($landmark);exit;
+        $this->assign('landmark',$landmark);
+        $this->display('landMarkList');
+    }
+
+    public function deleteTop() {
+        $id = I('id');
+        $delete = M('landmark');
+        if ($delete->delete($id) !== false) {
+            $this->success('删除成功');
+        }
+    }
+
+    public function deleteSKS() {
+        $id = I('id');
+        $delete = M('shinkansen');
+        if ($delete->delete($id) !== false) {
+            $this->success('删除成功');
+        }
+    }
+
+    public function deleteComment() {
+        $id = I('id');
+        $delete = M('comment');
+        if ($delete->delete($id) !== false) {
+            $this->success('删除成功');
+        }
+    }
+
+    //  地标筛选
+    public function filterLM() {
+        $type = 1; //  聚
+        $area = 1; //  黄埔
+        $filter = M('landmark');
+        if(!empty($type)) {
+            $condition['type'] = $type;
+            $filter->where($condition);
+        }
+        if(!empty($area)) {
+            $condition['area'] = $area;
+            $filter->where($condition);
+        }
+        $filter = $filter->select();
+        dump($filter);
+    }
+
+    //  校验新增Top100的数据
+    private function _checkInput($title, $address, $telphone, $content, $e, $n, $bool)
+    {
+        if (empty($title)) {
+            return '标题必须';
+        }
+
+        if (empty($address)) {
+            return '地址必须';
+        }
+
+        if (empty($telphone)) {
+            //return '座机必须';
+        }
+
+        if (empty($content)) {
+            return '内容必须';
+        }
+
+        if (empty($e)) {
+            return '东经必须';
+        }
+
+        if (empty($n)) {
+            return '北纬必须';
+        }
+
+        if (!$bool) {
+            foreach ($_FILES as $file) {
+                if ($file['size'] == 0) {
+                    return '需要上传4张图片的';
+                }
+            }
+
+        }
+
+        return true;
+    }
+
+    //  分类数组
+    private function _typeArray()
+    {
+        return $arr = array(
+            1 => '聚',
+            2 => '购',
+            3 => '品',
+            4 => '宿',
+            5 => '食',
+        );
+    }
+
+    //  地区数组
+    private function _areaArray()
+    {
+        return $arr = array(
+            1  => "黄浦区",
+            2  => "杨浦区",
+            3  => "普陀区",
+            4  => "虹口区",
+            5  => "静安区",
+            6  => "徐汇区",
+            7  => "长宁区",
+            8  => "浦东新区",
+            9  => "闵行区",
+            10 => "卢湾区",
+            11 => "宝山区",
+            12 => "松江区",
+        );
+    }
+
+    //  标签数组
+    private function _tagArray()
+    {
+        return $arr = array(
+            1 => '买手推荐',
+            2 => '小文艺',
+            3 => '不眠夜',
+            4 => '地铁沿线',
+        );
+    }
+
+    //  校验新增新干线的数据
+    private function _checkSKS($title, $content)
+    {
+        if (empty($title)) {
+            return '标题必须';
+        }
+
+        if (empty($content)) {
+            return '内容必须';
+        }
+
+        return true;
+    }
+}
