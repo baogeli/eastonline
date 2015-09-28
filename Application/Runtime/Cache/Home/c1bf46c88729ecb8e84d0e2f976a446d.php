@@ -14,7 +14,9 @@
 
 <script>
     var selectedIndex = 0;
+    var c_id;
     $(document).ready(function(){
+        var baogeli;
         var height = $(window).height();
         var new_height = height - 78;
         $('.left_bar').css('height',new_height);
@@ -64,16 +66,36 @@
         });
 
         $('.content').click(function(){
+            if (bar == true) {
+                $('.left_bar').animate({'left':-203},200);
+                $('.baogeli').animate({'margin-left':0},200);
+                $('.content_img').animate({'marginLeft':'0px'},200);
+                $('.content_title').animate({'marginLeft':'111px'},200);
+                $('.container').animate({'margin-left':0},200);
+                moveToTriangle(selectedIndex,-200);
+                bar == false;
+            }
             var channel_id = $(this).attr('data-id') ;
-            console.log(channel_id);
+            var content = $(this);
             //TODO AJAX查询详情
-
-            //TODO 增加DIV
-            var html = "<p>baogeli</p>";
-            $(this).after(html);
-
-            //TODO DIV高度从0到AUTO动画
-//            $(this).css('height','auto');
+            if (c_id != channel_id) {
+                $('.ajax_content').detach();
+                $.post("/Home/Index/ajaxDetail",
+                        {
+                            id: channel_id
+                        },
+                        function(data){
+                            c_id = channel_id;
+                            content.parent().append("<div class='ajax_content'> </div>");
+                            $('.ajax_content').animate({'height':300});
+                        }
+                );
+            } else {
+                c_id = null;
+                $('.ajax_content').animate({'height':0},function(){
+                    $('.ajax_content').detach();
+                });
+            }
         });
     });
 
@@ -110,40 +132,24 @@
 <div class="line"></div>
 
 <div class="container">
-    <div class="content" data-id="1">
-        <div class="content_img">
-            <div class="content_img_font">
-                00
-            </div>
-        </div>
-        <div class="content_title">OCN导视1</div>
-        <div class="content_detail">
-            <img  src="/Public/images/detail.jpg">
-        </div>
-        <div style="clear:both;width:100%;" id="expand1">
-        </div>
-    </div>
+    <?php if(is_array($l)): $i = 0; $__LIST__ = $l;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$list): $mod = ($i % 2 );++$i;?><div>
+            <div class="content" data-id="<?php echo ($list["list_channel_id"]); ?>">
+                <div class="content_img">
+                    <div class="content_img_font">
+                        <?php echo ($list["list_channel_no"]); ?>
+                    </div>
+                </div>
+                <div class="content_title"><?php echo ($list["list_name"]); ?></div>
+                <div class="content_detail">
+                    <img  src="/Public/images/detail.jpg">
+                </div>
+                <div style="clear:both;width:100%;" id="expand1">
+                </div>
 
-    <div class="lineB"></div>
-
-    <div class="content" data-id="2">
-        <div class="content_img">
-            <div class="content_img_font">
-                00
             </div>
-        </div>
-        <div class="content_title">OCN导视2</div>
-        <div class="content_detail">
-            <div class="content_detail_img">
-                <img onclick="detail(this)" src="/Public/images/detail.jpg">
-            </div>
-            <!--<div class="content_detail_title"></div>-->
-        </div>
-    </div>
-    <div class="lineB"></div>
+             <!--<div class='ajax_content'> </div>-->
+         </div><?php endforeach; endif; else: echo "" ;endif; ?>
 </div>
-
-
 
 <div style="height:78px"></div>
 
