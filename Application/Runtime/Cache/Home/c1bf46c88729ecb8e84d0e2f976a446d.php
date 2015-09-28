@@ -36,7 +36,9 @@
 
         //  点击出现侧边栏
         $('#l_bar').click(function () {
+            //  false 出现侧边栏
             if (bar == false) {
+                $('.ajax_content').remove();
                 $('.left_bar').animate({'left':0},200);
                 $('.content_img').animate({'marginLeft':'19px'},200);
                 $('.content_title').animate({'marginLeft':'31px'},200);
@@ -73,7 +75,7 @@
                 $('.content_title').animate({'marginLeft':'111px'},200);
                 $('.container').animate({'margin-left':0},200);
                 moveToTriangle(selectedIndex,-200);
-                bar == false;
+                bar = false;
             }
             var channel_id = $(this).attr('data-id') ;
             var content = $(this);
