@@ -20,10 +20,14 @@ class IndexController extends Controller
         $epg_view = M('epg_view');
         $condition['list_id'] = $channel_id;
         $epg_view = $epg_view->where($condition)->select();
-        $html = "<div class='ajax_content'>";
+        $html = "<div class='ajax_content' style='color: #ffffff;'>";
         foreach ($epg_view as $e) {
-            $html .= "";
+            $html.= 'id:'.$e['list_id'].'<br>节目名称:'
+                         .$e['view_name'].'<br>播出时间'
+                         .$e['view_begintime'];
+
         }
         $html .= "</div>";
+        echo $html;
     }
 }

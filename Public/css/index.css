@@ -1,4 +1,15 @@
-html,body{margin:0;padding:0;width:750px;overflow-x:hidden;}
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 750px;
+    overflow-x: hidden;
+
+    -webkit-user-select:none;
+    -moz-user-select:none;
+    -ms-user-select:none;
+    user-select:none;
+
+}
 
 .left_bar {
     position: fixed;
@@ -50,7 +61,7 @@ html,body{margin:0;padding:0;width:750px;overflow-x:hidden;}
 .logo {
     width: 713px;
     margin: 0 auto;
-    margin-top:18px;
+    margin-top: 18px;
     column-count: 4;
     -moz-column-count: 4;
     -webkit-column-count: 4;
@@ -85,7 +96,7 @@ html,body{margin:0;padding:0;width:750px;overflow-x:hidden;}
     padding-top: 10px;
     padding-bottom: 10px;
     min-height: 100px;
-    clear:both;
+    clear: both;
 }
 
 .content_img {
@@ -119,9 +130,10 @@ html,body{margin:0;padding:0;width:750px;overflow-x:hidden;}
     margin-right: 45px;
 }
 
-.content_detail img{
+.content_detail img {
     vertical-align: middle;
 }
+
 .content_detail_title {
     height: 30px;
     width: 104px;
@@ -132,7 +144,7 @@ html,body{margin:0;padding:0;width:750px;overflow-x:hidden;}
     height: 1px;
     width: 100%;
     background-color: #999999;
-    clear:both;
+    clear: both;
 }
 
 .end_bar {
@@ -153,7 +165,7 @@ html,body{margin:0;padding:0;width:750px;overflow-x:hidden;}
 }
 
 .end_bar_left img {
-    vertical-align:middle;  /*图片居中*/
+    vertical-align: middle; /*图片居中*/
 }
 
 .end_bar_right {

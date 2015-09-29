@@ -69,17 +69,33 @@
             var content = $(this);
             //TODO AJAX查询详情
             if (c_id != channel_id) {
-                $('.ajax_content').detach();
-                $.post("__URL__/ajaxDetail",
+//                $('.ajax_content').detach();
+                $('.ajax_content').animate({'height':0},function(){
+                    $('.ajax_content').detach();
+                });
+
+                var cba;
+                if (c_id != null) {
+                    cba = 800;
+                } else {
+                    cba = 0;
+                }
+
+                setTimeout(function(){
+                    $.post("__URL__/ajaxDetail",
                         {
                             id: channel_id
                         },
                         function(data){
                             c_id = channel_id;
-                            content.parent().append("<div class='ajax_content'> </div>");
-                            $('.ajax_content').animate({'height':300});
+                            content.parent().append(data);
+                            $('.ajax_content').css('height','auto').css('display','none');
+                            var abc =  $('.ajax_content').css('height');
+                            $('.ajax_content').css('height','0').css('display','block');
+                            $('.ajax_content').animate({'height':abc});
                         }
-                );
+                );},cba);
+
             } else {
                 c_id = null;
                 $('.ajax_content').animate({'height':0},function(){
